@@ -3,10 +3,15 @@
     "password": "Dialog@1234",
     "commercialName":"Coca Cola",
     "channel":"A Plus Kids TV",
-    "startTime":"14:00:00",
-    "EndTime": "15:00:00",
-    "language":"English",
-    "DealType":"TVC",
+    "startTime":"15:00:00",
+    "endTime": "16:00:00",
+    "language":"ENGLISH",
+    "dealType":"TVC",
     "category": "Beverages",
-    "Duration":"30"
+    "duration":"30",
+    "cardName": "Nadun",
+    "cardNumber":"2200 3100 0000 0000165",
+    "expireDate":"03/26",
+    "CVV":"492",
+    "channel_2":"&flix"
 }

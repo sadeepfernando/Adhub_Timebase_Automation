@@ -1,5 +1,6 @@
 class advertisementDetails{
 
+   
     getChannel(){
         return cy.get('#selectChannel')
     }
@@ -49,12 +50,19 @@ class advertisementDetails{
     }
 
     getTodaySpot(){
-        return cy.get('[id^="cse_"][id*="@2024-11-04"]')
+        const today = new Date().toISOString().slice(0,10);
+        
+       
+        return cy.get(`[id^="cse_"][id*="@${today}"]`)
 
     }
 
     getTommorrowDateSpot(){
-        return cy.get('[id^="cse_"][id*="@2024-11-05"]')
+        
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate()+1);
+        const tomorrowDate = tomorrow.toISOString().slice(0,10);
+        return cy.get(`[id^="cse_"][id*="@${tomorrowDate}"]`)
     }
 
     getDeleteIcon(){
@@ -66,11 +74,23 @@ class advertisementDetails{
     }
 
     clickingTheSpotsConatiner(){
-        return  cy.get('#tab0 > .table-responsive',{timeout:5000}).click()
+        return  cy.get('#tab0 > .table-responsive').click()
     }
 
     CommercialContainerAfterSpots(){
         return cy.get('#checkout_container > :nth-child(1)')
+    }
+
+    getAddToCartBtn(){
+        return cy.get('#add-to-cart-btn')
+    }
+
+    getAddToCartConfirmation(){
+        return cy.get('#emptyFileModal > .modal-dialog > .modal-content > .modal-body')
+    }
+
+    getConfirmationYesBtn(){
+        return cy.get('#yes-button')
     }
 }
 

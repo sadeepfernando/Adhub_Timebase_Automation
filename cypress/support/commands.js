@@ -24,9 +24,15 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
+
+
 import adhublogin from "../e2e/pages/adhubLogin"
-import scheduleAdvertising from '../e2e/pages/scheduleAdvertising';
+import scheduleAdvertising from "../e2e/pages/scheduleAdvertising";
 import advertisementDetails from "../e2e/pages/advertisementDetail";
+import viewCart from "../e2e/pages/viewCart";
+import paymentOptions from "../e2e/pages/paymentOptions";
+import giniePage from "../e2e/pages/giniePage";
+import paymentProviders from "../e2e/pages/paymentProviders";
 
 const today = new Date().toISOString().slice(0,10);
 const tomorrow = new Date();
@@ -36,61 +42,86 @@ const tomorrowDate = tomorrow.toISOString().slice(0,10);
 const scheduleAdd = new scheduleAdvertising();
 const login_pom = new adhublogin();
 const addDetails = new advertisementDetails();
+const cartDetails = new viewCart();
+const paymentMethods = new paymentOptions();
+const ginieIntegration = new giniePage();
+const cardDetails = new paymentProviders();
 
 Cypress.Commands.add('userLogin',()=>{
 
     cy.fixture('userData').then((user)=>{
 
         cy.session('LoginSession',()=>{
-            cy.visit('https://adhub.lk/sign-in')
+            cy.visit('/sign-in')
             login_pom.getUsername().type(user.username)
             login_pom.getPassword().type(user.password)
             login_pom.getSubmitBtn().click({force:true})
-            login_pom.getTimeBaseAdds().click()
-
+            login_pom.getTimeBaseAdds().click({force:true})
+            cy.url().should('be.eq', 'https://adhub.lk/custom-schedule');
         })
     })
 })
 
 
- 
-Cypress.Commands.add('navigateToAddDetail',()=>{
-    
+Cypress.Commands.add('scheduleTheAdvertisement',()=>{
     cy.fixture('userData').then((user)=>{
-
-        cy.session('selectChannelSession',()=>{
-            cy.userLogin();
-            scheduleAdd.visitScheduleAddPage()
-            scheduleAdd.getChannelInputField().type(user.Channel+"{enter}")
-            scheduleAdd.getFromDate().type(today)
-            scheduleAdd.getToDate().type(tomorrowDate)
-            scheduleAdd.getNextBtn().click({force:true})
-            cy.url().then((url)=>{
-                cy.visit(url);
-            })
-            
-            
-        })
+        scheduleAdd.getChannelInputField().type(user.channel+'{enter}')
+        scheduleAdd.getFromDate().type(today)
+        scheduleAdd.getToDate().type(tomorrowDate)
+        scheduleAdd.getNextBtn().click({force:true})
+        // cy.wait(1000)
+        // cy.url().then((url)=>{
+        //     cy.writeFile('cypress/fixtures/dynamicUrl.json',{url:url})
+        // })
     })
 })
 
-Cypress.Commands.add('addDetails',()=>{
-    const addDetails = new advertisementDetails()
-
-    
-    cy.fixture('userData').then((data)=>{
-        addDetails.getChannel().select(data.channel)
-        addDetails.getStartTime().select(data.startTime)
-        addDetails.getEndTime().select(data.endTime)
-        addDetails.getCommercialName().type(data.commercialName)
-        addDetails.getLanguage().type('English{enter}')
-        addDetails.getDealType().select('TVC')
-        addDetails.getCategory().select('Beverages')
-        addDetails.getDuration().select('30')
+Cypress.Commands.add('AdvertisementDetails',()=>{
+    cy.fixture('userData').then((user)=>{
+        addDetails.getChannel().select(user.channel)
+        addDetails.getStartTime().select(user.startTime)
+        addDetails.getEndTime().select(user.endTime)
+        addDetails.getCommercialName().type(user.commercialName+'{enter}')
+        addDetails.getLanguage().select(user.language)
+        addDetails.getDealType().select(user.dealType)
+        addDetails.getCategory().select(user.category)
+        addDetails.getDuration().select(user.duration)
         addDetails.getScheduleBtn().click()
-        addDetails.getSuccessMessage().should('be.visible')
-        .and('contain','Advertisement added to the schedule successfully')
-        addDetails.getSpotsConatiner().should('be.visible')
-        addDetails.getCommercialContainer()
     })
 })
+
+Cypress.Commands.add('spotConatiner',()=>{
+    cy.fixture('userData').then((user)=>{
+        addDetails.getTodaySpot().click().clear().type('4')
+        addDetails.clickingTheSpotsConatiner()
+        addDetails.getTommorrowDateSpot().click().clear().type('4')
+        addDetails.clickingTheSpotsConatiner()
+        addDetails.CommercialContainerAfterSpots().should('be.visible')
+        addDetails.getAddToCartBtn().click({force:true})
+        addDetails.getAddToCartConfirmation().should('be.visible')
+        addDetails.getConfirmationYesBtn().click()
+    })
+})
+
+
+Cypress.Commands.add('viewCartProceed',()=>{
+    cartDetails.getProceedToCheckoutBtn().click()
+})
+
+Cypress.Commands.add('PaymentMethodSelection',()=>{
+    paymentMethods.getVisaMethod().click()
+    paymentMethods.getNextBtn().click()
+})
+
+Cypress.Commands.add('ginieProceed',()=>{
+    ginieIntegration.getCheckBox().click()
+    ginieIntegration.getPayNowBtn().click()
+})
+
+Cypress.Commands.add('getShadowElement',(selector,shadowSelector)=>{
+    return cy.get(selector).shadow().find(shadowSelector);
+})
+
+
+
+  

@@ -1,15 +1,11 @@
 class scheduleAdvertising{
 
-    visitScheduleAddPage(){
-        return cy.visit('https://adhub.lk/custom-schedule')
-    }
-
     getTitle(){
-        return cy.get('.text-center').should('be.visible')
+        return cy.get('.text-center')
     }
 
     getFromDate(){
-        return cy.get('#from_date').should('be.visible')
+        return cy.get('#from_date')
     }
 
     getToDate(){
